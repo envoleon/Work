@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1200"
+   height="800"
+   viewBox="0 -30000 90000 60000"
+   version="1.1"
+   id="svg2942"
+   sodipodi:docname="TRY.svg"
+   inkscape:version="1.2 (dc2aeda, 2022-05-15)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2946" />
+  <sodipodi:namedview
+     id="namedview2944"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.3656508"
+     inkscape:cx="459.45476"
+     inkscape:cy="484.06841"
+     inkscape:window-width="1534"
+     inkscape:window-height="970"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2942" />
+  <title
+     id="title2936">Flag of Turkey</title>
+  <path
+     fill="#e30a17"
+     d="m0-30000h90000v60000H0z"
+     id="path2938" />
+  <path
+     fill="#ffffff"
+     d="m 51591.156,0 13568,-4408 -8386,11541 V -7133 l 8386,11541 z m 925,8021 a 15000,15000 0 1 1 0,-16042 12000,12000 0 1 0 0,16042 z"
+     id="path2940" />
+</svg>
