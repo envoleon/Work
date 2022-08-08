@@ -14,6 +14,8 @@ protocol MainViewDelegate: AnyObject {
 class MainView: UIView {
 
     private weak var delegate: MainViewDelegate?
+    private let mainSize = MainSize.shared
+    private var currencieTables = CurrencieTables.shared
 
     lazy var inputTableView: UITableView = {
         let tableView = UITableView()
@@ -25,8 +27,8 @@ class MainView: UIView {
     
     lazy var exportLabel: UITextView = {
         let textView = UITextView()
-        textView.font = UIFont.systemFont(ofSize: (baseSize?.scale(16))!)
-        textView.text = calcCurrency()
+        textView.font = UIFont.systemFont(ofSize: mainSize.exportFont)
+        textView.text = currencieTables.calcCurrency()
         textView.textColor = UIColor(named: "ColorGreen")
         textView.textAlignment = .center
         textView.backgroundColor = UIColor(named: "ColorGray1")
@@ -73,12 +75,12 @@ class MainView: UIView {
 
         let safeArea = safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            inputTableView.heightAnchor.constraint(equalToConstant: (baseSize?.scale(202))!),
+            inputTableView.heightAnchor.constraint(equalToConstant: mainSize.tableHeight),
             inputTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             inputTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             inputTableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
 
-            exportLabel.heightAnchor.constraint(equalToConstant: (baseSize?.scale(40))!),
+            exportLabel.heightAnchor.constraint(equalToConstant: mainSize.exportHeight),
             exportLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             exportLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             exportLabel.topAnchor.constraint(equalTo: inputTableView.bottomAnchor),

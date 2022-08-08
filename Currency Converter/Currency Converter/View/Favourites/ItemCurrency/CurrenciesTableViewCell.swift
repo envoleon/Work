@@ -14,17 +14,19 @@ protocol CellCurrencyDelegate: AnyObject {
 class CurrenciesTableViewCell: UITableViewCell {
 
     weak var delegate: CellCurrencyDelegate?
-    var currencieTable: CurrencieTable?
+    private let currenciesSize = CurrenciesSize.shared
+    private var currencieTables = CurrencieTables.shared
+    var currencieTable: CurrencieTables.CurrencieTable?
 
     private lazy var iconCurrencie: UIImageView = {
 
         var image = UIImage(named: currencieTable!.charCode)
-        let width = (46 * scaleWidth!) / (image?.size.height)! * (image?.size.width)!
-        image = image!.resize(CGSize(width: width, height: 46 * scaleWidth!))
+        let width = currenciesSize.widthIconImage / (image?.size.height)! * (image?.size.width)!
+        image = image!.resize(CGSize(width: width, height: currenciesSize.widthIconImage))
         let imageView = UIImageView(image: image)
-        imageView.layer.cornerRadius = 48 * scaleWidth! / 2
+        imageView.layer.cornerRadius = currenciesSize.cornerRadiusIcon
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.layer.borderWidth = 2 * scaleWidth!
+        imageView.layer.borderWidth = currenciesSize.borderWidthIcon
         imageView.layer.masksToBounds = false
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
@@ -58,7 +60,7 @@ class CurrenciesTableViewCell: UITableViewCell {
             button.setTitleColor(UIColor.white, for: .normal)
         }
 
-        button.titleLabel?.font = UIFont(name: "Currency-Converter", size: 24 * scaleWidth!)
+        button.titleLabel?.font = UIFont(name: "Currency-Converter", size: currenciesSize.fontFavourite)
         button.addTarget(self, action: #selector(self.handleAddFavourite), for: .touchUpInside)
 
         return button
@@ -94,24 +96,23 @@ class CurrenciesTableViewCell: UITableViewCell {
 
 
         NSLayoutConstraint.activate([
-            iconCurrencie.widthAnchor.constraint(equalToConstant: (baseSize?.scale(48))!),
-            iconCurrencie.heightAnchor.constraint(equalToConstant: (baseSize?.scale(48))!),
-            iconCurrencie.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: (baseSize?.scale(21))!),
+            iconCurrencie.widthAnchor.constraint(equalToConstant: currenciesSize.widthIcon),
+            iconCurrencie.heightAnchor.constraint(equalToConstant: currenciesSize.heightIcon),
+            iconCurrencie.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: currenciesSize.leadingIcon),
             iconCurrencie.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
-            nameCurrencie.heightAnchor.constraint(equalToConstant: (baseSize?.scale(22))!),
-            nameCurrencie.leadingAnchor.constraint(equalTo: iconCurrencie.trailingAnchor, constant: (baseSize?.scale(16))!),
-            nameCurrencie.trailingAnchor.constraint(equalTo: exchangeRate.leadingAnchor, constant: -(baseSize?.scale(16))!),
+            nameCurrencie.heightAnchor.constraint(equalToConstant: currenciesSize.heightName),
+            nameCurrencie.leadingAnchor.constraint(equalTo: iconCurrencie.trailingAnchor, constant: currenciesSize.leadingName),
+            nameCurrencie.trailingAnchor.constraint(equalTo: exchangeRate.leadingAnchor, constant: currenciesSize.trailingName),
             nameCurrencie.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
-            exchangeRate.heightAnchor.constraint(equalToConstant: (baseSize?.scale(21))!),
+            exchangeRate.heightAnchor.constraint(equalToConstant: currenciesSize.heightRate),
             exchangeRate.trailingAnchor.constraint(equalTo: iconFavourite.leadingAnchor),
             exchangeRate.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-
-            iconFavourite.widthAnchor.constraint(equalToConstant: (baseSize?.scale(56))!),
+            iconFavourite.widthAnchor.constraint(equalToConstant: currenciesSize.widthFavourite),
             iconFavourite.topAnchor.constraint(equalTo: contentView.topAnchor),
             iconFavourite.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            iconFavourite.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -(baseSize?.scale(3))!),
+            iconFavourite.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: currenciesSize.trailingFavourite),
             iconFavourite.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
         ])
     }
@@ -119,24 +120,24 @@ class CurrenciesTableViewCell: UITableViewCell {
     @objc
     private func handleAddFavourite() {
 
-        for i in 0..<currencieTables!.count {
-            if currencieTables![i].name == currencieTable?.name {
-                if currencieTables![i].isFavourite {
+        for i in 0..<currencieTables.currencie!.count {
+            if currencieTables.currencie![i].name == currencieTable?.name {
+                if currencieTables.currencie![i].isFavourite {
                     iconFavourite.setTitle("B", for: .normal)
                     iconFavourite.setTitleColor(UIColor.white, for: .normal)
-                    currencieTables![i].isFavourite = false
+                    currencieTables.currencie![i].isFavourite = false
                 } else {
                     iconFavourite.setTitle("F", for: .normal)
                     iconFavourite.setTitleColor(UIColor(named: "ColorOrange"), for: .normal)
-                    currencieTables![i].isFavourite = true
+                    currencieTables.currencie![i].isFavourite = true
                 }
             }
         }
 
-        favouritesCurrencieTables = currencieTables!.filter{ $0.isFavourite }
+        currencieTables.favourites = currencieTables.currencie!.filter{ $0.isFavourite }
 
         var names: [String] = []
-        for i in favouritesCurrencieTables! {
+        for i in currencieTables.favourites! {
             names.append(i.name)
         }
 

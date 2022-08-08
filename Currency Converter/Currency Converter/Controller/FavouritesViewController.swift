@@ -10,6 +10,8 @@ import UIKit
 class FavouritesViewController: UIViewController {
 
     private lazy var mainView = FavouritesView(delegate: self)
+    private let favouritesSize = FavouritesSize.shared
+    private var currencieTables = CurrencieTables.shared
     var charCode: String?
 
     override func loadView() {
@@ -59,12 +61,12 @@ extension FavouritesViewController: FavouritesViewDelegate {
 extension FavouritesViewController: UITableViewDataSource, CellCurrencyDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        favouritesCurrencieTables!.count
+        currencieTables.favourites!.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = CurrenciesTableViewCell()
-        cell.currencieTable = favouritesCurrencieTables![indexPath.row]
+        cell.currencieTable = currencieTables.favourites![indexPath.row]
         cell.delegate = self
         cell.createUI()
         cell.layout()
@@ -81,22 +83,22 @@ extension FavouritesViewController: UITableViewDataSource, CellCurrencyDelegate 
 extension FavouritesViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        (48 + 16) * scaleWidth!
+        favouritesSize.cellHeight
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if charCode != nil {
             let currentCell = tableView.cellForRow(at: indexPath) as! CurrenciesTableViewCell
 
-            for i in 0..<inputCurrencieTables!.count {
+            for i in 0..<currencieTables.inputCurrencie!.count {
 
-                if inputCurrencieTables![i].table.charCode == charCode {
+                if currencieTables.inputCurrencie![i].table.charCode == charCode {
                     let other = (i != 0) ? 0 : 1
 
-                    if inputCurrencieTables![other].table.charCode == currentCell.currencieTable!.charCode {
-                        inputCurrencieTables![other].table = inputCurrencieTables![i].table
+                    if currencieTables.inputCurrencie![other].table.charCode == currentCell.currencieTable!.charCode {
+                        currencieTables.inputCurrencie![other].table = currencieTables.inputCurrencie![i].table
                     }
-                    inputCurrencieTables![i].table = currentCell.currencieTable!
+                    currencieTables.inputCurrencie![i].table = currentCell.currencieTable!
                     navigationController?.popToRootViewController(animated: true)
                     break
                 }

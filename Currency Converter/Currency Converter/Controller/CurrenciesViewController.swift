@@ -11,6 +11,8 @@ class CurrenciesViewController: UIViewController {
 
 
     lazy var mainView = CurrenciesView()
+    private let currenciesSize = CurrenciesSize.shared
+    private var currencieTables = CurrencieTables.shared
     var charCode: String?
 
     private let nc = NotificationCenter.default
@@ -79,19 +81,19 @@ extension CurrenciesViewController: UISearchResultsUpdating {
 
     private func filterContentForSearchText(_ searchText: String) {
 
-        let startSearchTables = currencieTables!.filter({ (currencie: CurrencieTable) -> Bool in
+        let startSearchTables = currencieTables.currencie!.filter({ (currencie: CurrencieTables.CurrencieTable) -> Bool in
             return currencie.name.lowercased().starts(with: searchText.lowercased())
         })
 
-        let endSearchTables = currencieTables!.filter({ (currencie: CurrencieTable) -> Bool in
+        let endSearchTables = currencieTables.currencie!.filter({ (currencie: CurrencieTables.CurrencieTable) -> Bool in
             return !currencie.name.lowercased().starts(with: searchText.lowercased())
         })
 
-        filteredCurrencieTables = endSearchTables.filter({ (currencie: CurrencieTable) -> Bool in
+        currencieTables.favourites = endSearchTables.filter({ (currencie: CurrencieTables.CurrencieTable) -> Bool in
             return currencie.name.lowercased().contains(searchText.lowercased())
         })
 
-        filteredCurrencieTables! = startSearchTables + filteredCurrencieTables!
+        currencieTables.favourites! = startSearchTables + currencieTables.favourites!
         mainView.currenciesTableView.reloadData()
     }
 }
@@ -102,14 +104,14 @@ extension CurrenciesViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isFiltering {
-            return filteredCurrencieTables!.count
+            return currencieTables.favourites!.count
         }
-        return currencieTables!.count
+        return currencieTables.currencie!.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = CurrenciesTableViewCell()
-        cell.currencieTable = isFiltering ? filteredCurrencieTables![indexPath.row] : currencieTables![indexPath.row]
+        cell.currencieTable = isFiltering ? currencieTables.favourites![indexPath.row] : currencieTables.currencie![indexPath.row]
         cell.delegate = self
         cell.createUI()
         cell.layout()
@@ -125,22 +127,22 @@ extension CurrenciesViewController: UITableViewDelegate, CellCurrencyDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        (48 + 16) * scaleWidth!
+        currenciesSize.cellHeight
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if charCode != nil {
             let currentCell = tableView.cellForRow(at: indexPath) as! CurrenciesTableViewCell
 
-            for i in 0..<inputCurrencieTables!.count {
+            for i in 0..<currencieTables.inputCurrencie!.count {
 
-                if inputCurrencieTables![i].table.charCode == charCode {
+                if currencieTables.inputCurrencie![i].table.charCode == charCode {
                     let other = (i != 0) ? 0 : 1
 
-                    if inputCurrencieTables![other].table.charCode == currentCell.currencieTable!.charCode {
-                        inputCurrencieTables![other].table = inputCurrencieTables![i].table
+                    if currencieTables.inputCurrencie![other].table.charCode == currentCell.currencieTable!.charCode {
+                        currencieTables.inputCurrencie![other].table = currencieTables.inputCurrencie![i].table
                     }
-                    inputCurrencieTables![i].table = currentCell.currencieTable!
+                    currencieTables.inputCurrencie![i].table = currentCell.currencieTable!
                     navigationController?.popToRootViewController(animated: true)
                     break
                 }

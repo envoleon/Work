@@ -14,16 +14,16 @@ protocol FavouritesViewDelegate: AnyObject {
 class FavouritesView: UIView {
 
     private weak var delegate: FavouritesViewDelegate?
+    private let favouritesSize = FavouritesSize.shared
 
     private lazy var button: UIButton = {
-        let width = (baseSize?.scale(12.83))!
         let button = UIButton()
         button.backgroundColor = UIColor(named: "ColorOrange")
-        button.layer.cornerRadius = (baseSize?.scale(48))! / 2
+        button.layer.cornerRadius = favouritesSize.cornerRadiusButton
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor(named: "ColorGray6")?.cgColor
         button.setTitle("D", for: .normal)
-        button.titleLabel?.font = UIFont(name: "Currency-Converter", size: width)
+        button.titleLabel?.font = UIFont(name: "Currency-Converter", size: favouritesSize.fontButton)
         button.addTarget(self, action: #selector(self.handleAddCurrencie), for: .touchUpInside)
         return button
     }()
@@ -64,10 +64,10 @@ class FavouritesView: UIView {
     private func layout() {
         let safeArea = safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            button.widthAnchor.constraint(equalToConstant: (baseSize?.scale(48))!),
-            button.heightAnchor.constraint(equalToConstant: (baseSize?.scale(48))!),
-            button.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -(baseSize?.scale(20))!),
-            button.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -(baseSize?.scale(20))!),
+            button.widthAnchor.constraint(equalToConstant: favouritesSize.widthButton),
+            button.heightAnchor.constraint(equalToConstant: favouritesSize.heightButton),
+            button.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: favouritesSize.trailingButton),
+            button.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: favouritesSize.bottomButton),
 
             currenciesTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             currenciesTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),

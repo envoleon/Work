@@ -9,9 +9,12 @@ import UIKit
 
 class MainViewController: UIViewController {
 
-
     private let nc = NotificationCenter.default
     private lazy var mainView = MainView(delegate: self)
+    private let mainSize = MainSize.shared
+    private var currencieTables = CurrencieTables.shared
+
+
     let keyboardList = KeyboardList()
 
     override func loadView() {
@@ -33,7 +36,7 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         mainView.inputTableView.reloadData()
-        mainView.exportLabel.text = calcCurrency()
+        mainView.exportLabel.text = currencieTables.calcCurrency()
     }
 
 }
@@ -59,13 +62,25 @@ extension MainViewController: UICollectionViewDataSource, CollectionViewDelegate
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        for i in 0..<inputCurrencieTables!.count {
-            if inputCurrencieTables![i].isCurrent {
+        for i in 0..<currencieTables.inputCurrencie!.count {
+            if currencieTables.inputCurrencie![i].isCurrent {
 
-                if !(inputCurrencieTables![i].num.contains(".") && keyboardList.keyArray[indexPath.item] == ".") {
-                    //let other = (i != 0) ? 0 : 1
-                    inputCurrencieTables![i].num = inputCurrencieTables![i].num + keyboardList.keyArray[indexPath.item]
-                    mainView.exportLabel.text = calcCurrency()
+                let isContainsDot = currencieTables.inputCurrencie![i].num.contains(".")
+                let isAddDot = keyboardList.keyArray[indexPath.item] == "."
+
+                if !(isContainsDot && isAddDot) {
+
+                    let numFloat = Float(currencieTables.inputCurrencie![i].num)!
+
+                    if !isAddDot {
+                        let item = Int(keyboardList.keyArray[indexPath.item])!
+                        currencieTables.inputCurrencie![i].num = (isContainsDot || isAddDot) ? currencieTables.inputCurrencie![i].num + String(item) : String(Int(numFloat) * 10 + item)
+
+                    } else {
+                        currencieTables.inputCurrencie![i].num += keyboardList.keyArray[indexPath.item]
+                    }
+
+                    mainView.exportLabel.text = currencieTables.calcCurrency()
                     mainView.inputTableView.reloadData()
                     break
                 }
@@ -79,32 +94,20 @@ extension MainViewController: UICollectionViewDataSource, CollectionViewDelegate
 
 extension MainViewController: UICollectionViewDelegateFlowLayout {
 
-    private var widthButton: CGFloat { floor((baseSize?.scale(84))!) }
-    private var leftRightWidth: CGFloat { floor((baseSize?.scale(20))!) }
-    private var topHeight: CGFloat { (baseSize?.scale(13))! }
-    private var bottomHeight: CGFloat { (baseSize?.scale(24))! + (baseSize?.scale(84))! - widthButton }
-    private var verticalWidthSpacing: CGFloat { floor((baseSize?.scale(42))!) }
-    private var horizontalWidthSpacing: CGFloat { (baseSize?.scale(18))! + (baseSize?.scale(84))! - widthButton }
-
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-
-        if indexPath.item == 9 {
-            return CGSize(width: widthButton * 2 + verticalWidthSpacing, height: widthButton)
-        }
-
-        return CGSize(width: widthButton, height: widthButton)
+        mainSize.keyButton(indexPath.item)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-       horizontalWidthSpacing
+        mainSize.keyHorizontalWidthSpacing
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        verticalWidthSpacing
+        mainSize.keyVerticalWidthSpacing
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: topHeight, left: leftRightWidth, bottom: bottomHeight, right: leftRightWidth)
+        mainSize.keyEdgeInsets
     }
 
 }
@@ -120,8 +123,8 @@ extension MainViewController: UITableViewDataSource, MainInputTableViewDelegate 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = MainInputTableViewCell()
 
-        cell.inputCurrencieTable = inputCurrencieTables![indexPath.row]
-        cell.contentView.backgroundColor = inputCurrencieTables![indexPath.row].isCurrent ? UIColor(named: "ColorGray4") : UIColor(named: "ColorGray3")
+        cell.inputCurrencieTable = currencieTables.inputCurrencie![indexPath.row]
+        cell.contentView.backgroundColor = currencieTables.inputCurrencie![indexPath.row].isCurrent ? UIColor(named: "ColorGray4") : UIColor(named: "ColorGray3")
         cell.delegate = self
         cell.createUI()
         cell.layout()
@@ -130,9 +133,9 @@ extension MainViewController: UITableViewDataSource, MainInputTableViewDelegate 
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let outher = (indexPath.row != 0) ? 0 : 1
-        inputCurrencieTables![outher].isCurrent = false
-        inputCurrencieTables![indexPath.row].isCurrent = true
-        mainView.exportLabel.text = calcCurrency()
+        currencieTables.inputCurrencie![outher].isCurrent = false
+        currencieTables.inputCurrencie![indexPath.row].isCurrent = true
+        mainView.exportLabel.text = currencieTables.calcCurrency()
         tableView.reloadData()
     }
 
@@ -153,6 +156,6 @@ extension MainViewController: UITableViewDelegate, MainViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        (baseSize?.scale(101))!
+        mainSize.cellHeight
     }
 }

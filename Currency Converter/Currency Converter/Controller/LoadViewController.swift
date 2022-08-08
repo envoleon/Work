@@ -9,13 +9,15 @@ import UIKit
 
 class LoadViewController: UIViewController {
 
+    private var loadSize = LoadSize.shared
+    private var currencieTables = CurrencieTables.shared
     private var elementName: String?
     private var numValute = -1
 
-    private lazy var navigation: (UIViewController, String, String) -> UINavigationController = {
+    private lazy var navigation: (UIViewController, String, String) -> UINavigationController = { [self] in
         let navigation = UINavigationController(rootViewController: $0)
         navigation.tabBarItem.title = $1
-        let font = UIFont(name: "Currency-Converter", size: 24 * scaleWidth!)
+        let font = UIFont(name: "Currency-Converter", size: loadSize.font)
         navigation.tabBarItem.image = $2.image(withAttributes: [ .foregroundColor: UIColor.red, .font: font as Any])
         return navigation
     }
@@ -63,7 +65,7 @@ class LoadViewController: UIViewController {
             xml.parse()
 
             DispatchQueue.main.async {
-                self.dismiss(animated: true, completion: {
+                self.dismiss(animated: true, completion: { [self] in
                     self.navigationController?.popViewController(animated: true)
 
                     UIApplication.shared.windows.first?.rootViewController = self.tabBar("ColorGray1", "ColorOrange", "ColorGray2", [
@@ -73,19 +75,7 @@ class LoadViewController: UIViewController {
                         self.navigation(ProfileViewController(), "Profile", "C")
                     ])
 
-                    if let tables = UserDefaults.standard.array(forKey: "favourites") {
-                        for name in tables {
-                            for i in 0..<currencieTables!.count {
-                                if currencieTables![i].name == name as! String {
-                                    currencieTables![i].isFavourite = true
-                                }
-                            }
-                        }
-                    }
-
-                    favouritesCurrencieTables = currencieTables!.filter{ $0.isFavourite }
-                    inputCurrencieTables?.append(InputTableSetting(table: currencieTables![0], isCurrent: true, num: "1"))
-                    inputCurrencieTables?.append(InputTableSetting(table: currencieTables![1], isCurrent: false, num: "1"))
+                    currencieTables.initSettings()
 
                     UIApplication.shared.windows.first?.makeKeyAndVisible()
                 })
@@ -105,7 +95,7 @@ extension LoadViewController: XMLParserDelegate {
 
         if elementName == "Valute" {
             numValute += 1
-            currencieTables?.append(CurrencieTable())
+            currencieTables.currencie?.append(CurrencieTables.CurrencieTable())
         }
 
         self.elementName = elementName
@@ -116,16 +106,16 @@ extension LoadViewController: XMLParserDelegate {
 
         if !data.isEmpty {
             if elementName == "NumCode" {
-                currencieTables![numValute].numCode = Int(data)!
+                currencieTables.currencie![numValute].numCode = Float(data)!
             } else if elementName == "CharCode" {
-                currencieTables![numValute].charCode = data
+                currencieTables.currencie![numValute].charCode = data
             } else if elementName == "Nominal" {
-                currencieTables![numValute].nominal = Int(data)!
+                currencieTables.currencie![numValute].nominal = Float(data)!
             } else if elementName == "Name" {
-                currencieTables![numValute].name = data
+                currencieTables.currencie![numValute].name = data
             } else if elementName == "Value" {
                 data = data.replacingOccurrences(of: ",", with: ".")
-                currencieTables![numValute].value = Float(data)!
+                currencieTables.currencie![numValute].value = Float(data)!
             }
         }
     }

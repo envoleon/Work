@@ -10,21 +10,21 @@ import UIKit
 
 class CurrenciesView: UIView {
 
+    private let currenciesSize = CurrenciesSize.shared
+
     var searchBarIsEmpty: Bool {
         guard let text = searchController.searchBar.text else { return false }
         return text.isEmpty
     }
     
-    let searchController: UISearchController = {
+    lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: .none)
         searchController.isActive = true
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search"
-        searchController.searchBar.searchTextField.font = UIFont.systemFont(ofSize: (baseSize?.scale(16))!)
-        searchController.searchBar.searchTextField.layer.cornerRadius = (baseSize?.scale(8))!
-
+        searchController.searchBar.searchTextField.font = UIFont.systemFont(ofSize: currenciesSize.fontSearch)
+        searchController.searchBar.searchTextField.layer.cornerRadius = currenciesSize.cornerRadiusSearch
         searchController.searchBar.searchTextField.backgroundColor = UIColor(named: "ColorGray3")
-
         searchController.searchBar.searchTextField.leftView?.tintColor = UIColor(named: "ColorOrange")
         return searchController
     }()
